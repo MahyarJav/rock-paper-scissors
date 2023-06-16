@@ -1,66 +1,90 @@
 const choices = ["rock", "paper", "scissors"]
 let roundWinner = "";
+const score = {
+    player: 0,
+    computer: 0,
+    draw: 0
+}
+
+
+const mainSect = document.getElementById("main");
+const buttonDiv = document.createElement("div");
+const rockButton = document.createElement("button");
+const paperButton = document.createElement("button");
+const scissorButton = document.createElement("button");
+const scoreDiv = document.createElement("div")
+const scoreList = document.createElement("ul");
+const playerScore = document.createElement("li")
+const computerScore = document.createElement("li")
+const drawScore = document.createElement("li")
+const finalScore = document.createElement("h4")
+rockButton.classList.add("rock");
+rockButton.setAttribute("id", "rock-button")
+rockButton.textContent = "Rock!"
+paperButton.classList.add("paper");
+paperButton.setAttribute("id", "paper-button")
+paperButton.textContent = "Paper!"
+scissorButton.classList.add("scissors");
+scissorButton.setAttribute("id", "scissors-button")
+scissorButton.textContent = "Scissors!"
+scoreDiv.classList.add("scores")
+scoreDiv.setAttribute("style", "border: black 1px solid;width: 350px; margin-top: 10px;")
+scoreList.setAttribute("style", "list-style:none;")
+finalScore.setAttribute("style", "text-align: center;")
+playerScore.textContent = `Player: ${score.player}`
+computerScore.textContent = `Computer: ${score.computer}`
+drawScore.textContent = `Draw: ${score["draw"]} `
+mainSect.appendChild(buttonDiv);
+buttonDiv.appendChild(rockButton);
+buttonDiv.appendChild(paperButton);
+buttonDiv.appendChild(scissorButton);
+mainSect.appendChild(scoreDiv);
+scoreDiv.appendChild(scoreList);
+scoreList.appendChild(playerScore)
+scoreList.appendChild(computerScore)
+scoreList.appendChild(drawScore)
+scoreDiv.appendChild(finalScore)
+
 function getComputerChoice() {
     return choices[Math.floor(Math.random() * 3)]
 }
 function playRound(playerSelection, computerSelection) {
-    let loweredPlayer = playerSelection.toLowerCase();
-    const youLose = `You lose, ${computerSelection} beats ${loweredPlayer}`
-    const youWin = `You win, ${loweredPlayer} beats ${computerSelection}!`
-    const youDraw = `Draw, you both picked ${loweredPlayer}`
-    if (loweredPlayer == "rock") {
-        if (computerSelection == "paper") {
-            roundWinner = "computer";
-            return youLose
-        } else if (computerSelection == "scissors") {
-            roundWinner = "player";
-            return youWin
-        } else {
-            roundWinner = "draw"
-            return youDraw
-        }
+    if (playerSelection == computerSelection) {
+        score.draw++
+    } else if (playerSelection == "rock") {
+        computerSelection == "paper"
+            ? score.computer++
+            : score.player++
+    } else if (playerSelection == "paper") {
+        computerSelection == "scissors"
+            ? score.computer++
+            : score.player++
+    } else if (playerSelection == "scissors") {
+        computerSelection == "rock"
+            ? score.computer++
+            : score.player++
     }
-    if (loweredPlayer == "paper") {
-        if (computerSelection == "scissors") {
-            roundWinner = "computer"
-            return youLose
-        } if (computerSelection == "rock") {
-            roundWinnder = "player"
-            return youWin
-        } else {
-            roundWinner = "draw"
-            return youDraw
-        }
-    } if (loweredPlayer == "scissors") {
-        if (computerSelection == "rock") {
-            roundWinner = "computer"
-            return youLose
-        } if (computerSelection == "paper") {
-            roundWinner = "player"
-            return youWin
-        } else {
-            roundWinner = "draw"
-            return youDraw
-        }
+    playerScore.textContent = `Player: ${score.player}`
+    computerScore.textContent = `Computer: ${score.computer}`
+    drawScore.textContent = `Draw: ${score["draw"]} `
+
+}
+
+
+function playerSelection(button) {
+    if (score.player !== 5 && score.computer !== 5) {
+        playRound(button, getComputerChoice())
     } else {
-        roundWinner = "computer"
-        return `You lose as ${playerSelection} was not one of the 3 options.`
+        finalScore.textContent =
+            score.player > score.computer ?
+                `Player wins ${score.player} to ${score.computer}` :
+                `Computer wins ${score.computer} to ${score.player}`
     }
 }
-function game() {
-    let rounds = 0;
-    let playerPrompt;
-    let score = {
-        player: 0,
-        computer: 0,
-        draw: 0
-    }
-    while (rounds < 5) {
-        playerPrompt = window.prompt("Rock, paper or scissors, other response = automatic loss")
-        console.log(playRound(playerPrompt, getComputerChoice()))
-        score[roundWinner]++
-        rounds++
-    }
-    console.log(score)
-    console.log(score.computer <= score.player ? "You win!" : "Computer wins.")
-}
+
+const buttons = document.querySelectorAll("button");
+buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+        playerSelection(button.classList)
+    })
+})
